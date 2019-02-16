@@ -1,6 +1,6 @@
 # Logger middleware configuration
 [LogRotation]
-LogPath = "/tmp/oroWallet-log"
+LogPath = "/tmp/mdstest-log"
 MaxAge = "48h" # log file max age before being purged
 RotationInterval = "24h" # interval of log rotation
 RotationFormat = "%Y-%m-%d.log" # format of string to append to logfile name
