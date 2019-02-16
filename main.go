@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"os/signal"
 	"strconv"
@@ -28,7 +27,7 @@ func main() {
 	// Start server
 	go func() {
 		if err := app.Echo.Start(":" + strconv.Itoa(app.AppConfig.Server.ListeningPort)); err != nil {
-			app.Echo.Logger.Fatal(fmt.Printf("Failed to start server: %+v\n", err))
+			app.Echo.Logger.Infof("Shutting down the server: %+v", err)
 			os.Exit(1)
 		}
 	}()
