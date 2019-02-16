@@ -1,0 +1,11 @@
+# Logger middleware configuration
+[LogRotation]
+LogPath = "/tmp/oroWallet-log"
+MaxAge = "48h" # log file max age before being purged
+RotationInterval = "24h" # interval of log rotation
+RotationFormat = "%Y-%m-%d.log" # format of string to append to logfile name
+LinkName = ".current.log" # string to append to symlink name of current logfile
+
+[Formatter]
+TimeStampFormat = "2006-01-02 15:04:05.000000" # format of timestamp to write for the log entry
+FullTimeStamp = true # enable/disable the entry timestamp when logging

@@ -1,13 +1,14 @@
 package application
 
 import (
-	"mdstest/application/config"
-
 	"fmt"
 	"os"
 	"path"
 
+	"mdstest/application/config"
+
 	"github.com/BurntSushi/toml"
+	"github.com/sirupsen/logrus"
 )
 
 //setupConfig sets application configurations
@@ -23,4 +24,11 @@ func (app *Application) SetupConfig() {
 	if err != nil {
 		panic(fmt.Sprintf("Failed decoding default application config: %+v", err))
 	}
+
+	//set default echo logger
+	appLogger := logrus.New()
+	appLogger.SetOutput(os.Stdout)
+	appLogger.SetLevel(logrus.DebugLevel)
+
+	app.Echo.Logger = NewLogger(appLogger)
 }

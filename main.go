@@ -28,8 +28,8 @@ func main() {
 	// Start server
 	go func() {
 		if err := app.Echo.Start(":" + strconv.Itoa(app.AppConfig.Server.ListeningPort)); err != nil {
-			app.Echo.Logger.Fatal(fmt.Printf("Failed to start server: ", err))
-			panic(err)
+			app.Echo.Logger.Fatal(fmt.Printf("Failed to start server: %+v\n", err))
+			os.Exit(1)
 		}
 	}()
 
