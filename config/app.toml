@@ -1,0 +1,3 @@
+[server]
+ListeningPort = 1323	#Web server listening port
+ShutdownTimeout = "30s"	#Duration to wait for graceful shutdown of web server
