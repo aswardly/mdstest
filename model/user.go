@@ -1,11 +1,24 @@
 package model
 
 import (
+	"encoding/json"
+	"fmt"
+	"time"
+
 	"mdstest/helper"
 
-	"encoding/json"
-	"time"
+	"github.com/jinzhu/gorm"
 )
+
+const StatusActive = "A"
+const StatusInactive = "I"
+const StatusDeleted = "D"
+
+var StatusMap =  map[string]string {
+	"A" : "Active",
+	"I" : "Inactive",
+	"D" : "Deleted",
+}
 
 type User struct {
 	UserId			string			`json:"user_id" gorm:"primary_key"`
@@ -59,4 +72,50 @@ func (u *User) UnmarshalJSON(data []byte) error {
 	u.LastUpdated = lastUpdated.In(helper.DefaultLocation)
 
 	return nil
+}
+
+
+//validators
+
+//validateStatus performs validation on field UserStatus
+func (u *User) validateStatus() *ValidationError {
+	if _, ok := StatusMap[u.UserStatus]; ok == false {
+		return &ValidationError{
+			ErrorField: "UserStatus",
+			ErrorMsg: fmt.Sprintf("Invalid status value: %v", u.UserStatus),
+		}
+	}
+	return nil
+}
+
+//validateAdd performs validation on the model for new user case
+func (u *User) validateAdd(db gorm.DB) *ValidationError {
+	var exist int
+	//check if user with same id exists
+	db.Where("user_id = ?", u.UserId).Count(&exist)
+
+	if exist >= 1 {
+		return &ValidationError{
+			ErrorField: "UserId",
+			ErrorMsg: "User already exists",
+		}
+	}
+
+	return u.validateStatus()
+}
+
+//validateEdit performs validation on the model for edit user case
+func (u *User) validateEdit(db gorm.DB) *ValidationError {
+	var exist int
+	//check if user with same id exists
+	db.Where("user_id = ?", u.UserId).Count(&exist)
+
+	if exist == 0 {
+		return &ValidationError{
+			ErrorField: "UserId",
+			ErrorMsg: "User doesn't exist",
+		}
+	}
+
+	return u.validateStatus()
 }
