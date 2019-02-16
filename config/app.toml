@@ -1,3 +1,7 @@
 [server]
 ListeningPort = 1323	#Web server listening port
 ShutdownTimeout = "30s"	#Duration to wait for graceful shutdown of web server
+
+[database]
+DriverType = "mysql"
+DSN = "user:password@/mdstest?charset=utf8&parseTime=True&loc=Asia%2FJakarta"

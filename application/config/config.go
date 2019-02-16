@@ -2,8 +2,8 @@ package config
 
 //AppConfig represents application main config
 type AppConfig struct {
-	Server	ServerConfig
-	Db		DbConfig
+	Server		ServerConfig
+	Database	DbConfig
 }
 
 //ServerConfig represents web server specific config
@@ -14,5 +14,6 @@ type ServerConfig struct {
 
 //DbConfig represents database related config
 type DbConfig struct {
-	DSN 	string		//datasource string for db connection
+	DriverType	string		//database driver type
+	DSN 		string		//datasource string for db connection
 }
