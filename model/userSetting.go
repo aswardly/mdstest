@@ -62,20 +62,20 @@ func (us *UserSetting) UnmarshalJSON(data []byte) error {
 }
 
 //validateAdd performs validation on the model for new user setting case
-func (us *UserSetting) validateAdd(db gorm.DB) *ValidationError {
+func (us *UserSetting) ValidateAdd(db *gorm.DB) error {
 	if us.User == nil {
-		return &ValidationError{
+		return ValidationError{
 			ErrorField: "User",
 			ErrorMsg: "Null User value",
 		}
 	}
 
-	var exist int
 	//check if setting with same key exists for the given user
-	db.Where("setting_id = ? AND user_id = ?", us.SettingId ,us.User.UserId).Count(&exist)
+	var count int
+	db.Table("user_settings").Where("setting_id = ? AND user_id = ?", us.SettingId ,us.User.UserId).Count(&count)
 
-	if exist >= 1 {
-		return &ValidationError{
+	if count >= 1 {
+		return ValidationError{
 			ErrorField: "UserId",
 			ErrorMsg: "User setting already exists",
 		}
@@ -84,20 +84,20 @@ func (us *UserSetting) validateAdd(db gorm.DB) *ValidationError {
 }
 
 //validateEdit performs validation on the model for new user setting case
-func (us *UserSetting) validateEdit(db gorm.DB) *ValidationError {
+func (us *UserSetting) ValidateEdit(db *gorm.DB) error {
 	if us.User == nil {
-		return &ValidationError{
+		return ValidationError{
 			ErrorField: "User",
 			ErrorMsg: "Null User value",
 		}
 	}
 
-	var exist int
 	//check if setting with same key exists for the given user
-	db.Where("setting_id = ? AND user_id = ?", us.SettingId ,us.User.UserId).Count(&exist)
+	var count int
+	db.Table("user_settings").Where("setting_id = ? AND user_id = ?", us.SettingId ,us.User.UserId).Count(&count)
 
-	if exist == 0 {
-		return &ValidationError{
+	if count == 0 {
+		return ValidationError{
 			ErrorField: "UserId",
 			ErrorMsg: "User setting doesn't exist",
 		}

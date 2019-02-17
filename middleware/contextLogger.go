@@ -1,4 +1,4 @@
-package application
+package middleware
 
 import (
 	"io"
@@ -53,154 +53,154 @@ func lookupGommonLogLevelToLogrusLevel(level log.Lvl) logrus.Level {
 
 //Logger is meant to be a generic logger used by echo.Context (adheres to echo.Logger interface)
 //uses logrus for logging purpose
-type Logger struct {
+type ContextLogger struct {
 	logger *logrus.Logger	//embedded logrus.Logger instance
 }
 
 //NewLogger returns a new logger instance using the given logrus.Logger from param
-func NewLogger(logger *logrus.Logger) *Logger {
-	return &Logger{
+func NewContextLogger(logger *logrus.Logger) *ContextLogger {
+	return &ContextLogger{
 		logger: logger,
 	}
 }
 
 //Output returns the output written to by the logger
-func (l *Logger) Output() io.Writer {
-	return l.logger.Out
+func (cl *ContextLogger) Output() io.Writer {
+	return cl.logger.Out
 }
 
 //SetOutput sets the output to write log entries
-func (l *Logger) SetOutput(w io.Writer) {
-	l.logger.SetOutput(w)
+func (cl *ContextLogger) SetOutput(w io.Writer) {
+	cl.logger.SetOutput(w)
 }
 
 //Prefix is unimplemented
-func (l *Logger) Prefix() string {
+func (cl *ContextLogger) Prefix() string {
 	//unimplemented
 	return ""
 }
 
 //SetPrefix is unimplemented
-func (l *Logger) SetPrefix(p string) {
+func (cl *ContextLogger) SetPrefix(p string) {
 	//unimplemented
 }
 
 //Level returns the current log level of the logger
-func (l *Logger) Level() log.Lvl {
-	return lookupLogrusLevelToGommonLogLevel(l.logger.GetLevel())
+func (cl *ContextLogger) Level() log.Lvl {
+	return lookupLogrusLevelToGommonLogLevel(cl.logger.GetLevel())
 }
 
 //SetLevel sets the log level of the logger
-func (l *Logger) SetLevel(level log.Lvl) {
-	l.logger.SetLevel(lookupGommonLogLevelToLogrusLevel(level))
+func (cl *ContextLogger) SetLevel(level log.Lvl) {
+	cl.logger.SetLevel(lookupGommonLogLevelToLogrusLevel(level))
 }
 
 //SetHeader is unimplemented
-func (l *Logger) SetHeader(h string) {
+func (cl *ContextLogger) SetHeader(h string) {
 	//unimplemented
 }
 
 //Print prints a log entry
-func (l *Logger) Print(i ...interface{}) {
-	l.logger.Print(i)
+func (cl *ContextLogger) Print(i ...interface{}) {
+	cl.logger.Print(i)
 }
 
 //Printf prints a formatted string as a log entry
-func (l *Logger) Printf(format string, args ...interface{}) {
-	l.logger.Printf(format, args)
+func (cl *ContextLogger) Printf(format string, args ...interface{}) {
+	cl.logger.Printf(format, args)
 }
 
 //Printj is unimplemented
-func (l *Logger) Printj(j log.JSON) {
+func (cl *ContextLogger) Printj(j log.JSON) {
 	//unimplemented
 }
 
 //Debug prints a new log entry with log level Debug
-func (l *Logger) Debug(i ...interface{}) {
-	l.logger.Debug(i)
+func (cl *ContextLogger) Debug(i ...interface{}) {
+	cl.logger.Debug(i)
 }
 
 //Debugf prints a formatted string as a log entry with log level Debug
-func (l *Logger) Debugf(format string, args ...interface{}) {
-	l.logger.Debugf(format, args)
+func (cl *ContextLogger) Debugf(format string, args ...interface{}) {
+	cl.logger.Debugf(format, args)
 }
 
 //Debugj is unimplemented
-func (l *Logger) Debugj(j log.JSON) {
+func (cl *ContextLogger) Debugj(j log.JSON) {
 	//unimplemented
 }
 
 //Info prints a new log entry with log level Info
-func (l *Logger) Info(i ...interface{}) {
-	l.logger.Info(i)
+func (cl *ContextLogger) Info(i ...interface{}) {
+	cl.logger.Info(i)
 }
 
 //Infof prints a formatted string as a log entry with log level Info
-func (l *Logger) Infof(format string, args ...interface{}) {
-	l.logger.Infof(format, args)
+func (cl *ContextLogger) Infof(format string, args ...interface{}) {
+	cl.logger.Infof(format, args)
 }
 
 //Infoj is unimplemented
-func (l *Logger) Infoj(j log.JSON) {
+func (cl *ContextLogger) Infoj(j log.JSON) {
 	//unimplemented
 }
 
 //Warn prints a new log entry with log level Warn
-func (l *Logger) Warn(i ...interface{}) {
-	l.logger.Warn(i)
+func (cl *ContextLogger) Warn(i ...interface{}) {
+	cl.logger.Warn(i)
 }
 
 //Warnf prints a formatted string as a log entry with log level Warn
-func (l *Logger) Warnf(format string, args ...interface{}) {
-	l.logger.Warnf(format, args)
+func (cl *ContextLogger) Warnf(format string, args ...interface{}) {
+	cl.logger.Warnf(format, args)
 }
 
 //Warnj is unimplemented
-func (l *Logger) Warnj(j log.JSON) {
+func (cl *ContextLogger) Warnj(j log.JSON) {
 	//unimplemented
 }
 
 //Error prints a new log entry with log level Error
-func (l *Logger) Error(i ...interface{}) {
-	l.logger.Error(i)
+func (cl *ContextLogger) Error(i ...interface{}) {
+	cl.logger.Error(i)
 }
 
 //Errorf prints a formatted string as a log entry with log level Error
-func (l *Logger) Errorf(format string, args ...interface{}) {
-	l.logger.Errorf(format, args)
+func (cl *ContextLogger) Errorf(format string, args ...interface{}) {
+	cl.logger.Errorf(format, args)
 }
 
 //Errorj is unimplemented
-func (l *Logger) Errorj(j log.JSON) {
+func (cl *ContextLogger) Errorj(j log.JSON) {
 	//unimplemented
 }
 
 //Fatal prints a new log entry with log level Fatal
-func (l *Logger) Fatal(i ...interface{}) {
-	l.logger.Fatal(i)
+func (cl *ContextLogger) Fatal(i ...interface{}) {
+	cl.logger.Fatal(i)
 }
 
 //Fatalf prints a formatted string as a log entry with log level Fatal
-func (l *Logger) Fatalf(format string, args ...interface{}) {
-	l.logger.Fatalf(format, args)
+func (cl *ContextLogger) Fatalf(format string, args ...interface{}) {
+	cl.logger.Fatalf(format, args)
 }
 
 //Fatalj is unimplemented
-func (l *Logger) Fatalj(j log.JSON) {
+func (cl *ContextLogger) Fatalj(j log.JSON) {
 	//unimplemented
 }
 
 //Panic prints a new log entry with log level Panic
-func (l *Logger) Panic(i ...interface{}) {
-	l.logger.Panic(i)
+func (cl *ContextLogger) Panic(i ...interface{}) {
+	cl.logger.Panic(i)
 }
 
 //Panicf prints a formatted string as a log entry with log level Panic
-func (l *Logger) Panicf(format string, args ...interface{}) {
-	l.logger.Panicf(format, args)
+func (cl *ContextLogger) Panicf(format string, args ...interface{}) {
+	cl.logger.Panicf(format, args)
 }
 
 //Panicj is unimplemented
-func (l *Logger) Panicj(j log.JSON) {
+func (cl *ContextLogger) Panicj(j log.JSON) {
 	//unimplemented
 }

@@ -136,6 +136,9 @@ func LoggerWithConfig(config LoggerConfig) echo.MiddlewareFunc {
 				return next(c)
 			}
 
+			//set the echo context logger instance
+			c.Echo().Logger = NewContextLogger(logger)
+
 			start := time.Now() //mark start time for counting total processing time/latency
 
 			//NOTE: for proper and correct measurement, this logger should be set as the first middleware used

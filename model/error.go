@@ -7,7 +7,7 @@ type ValidationError struct {
 }
 
 //Error returns the error message as string (satisfies error interface)
-func (ve *ValidationError) Error() string {
+func (ve ValidationError) Error() string {
 	return ve.ErrorMsg
 }
 

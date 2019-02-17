@@ -2,13 +2,15 @@ package application
 
 import (
 	"fmt"
+	"github.com/labstack/echo"
+	"mdstest/response"
+	"net/http"
 	"os"
 	"path"
 
 	"mdstest/application/config"
 
 	"github.com/BurntSushi/toml"
-	"github.com/sirupsen/logrus"
 )
 
 //setupConfig sets application configurations
@@ -25,10 +27,23 @@ func (app *Application) SetupConfig() {
 		panic(fmt.Sprintf("Failed decoding default application config: %+v", err))
 	}
 
-	//set default echo logger
-	appLogger := logrus.New()
-	appLogger.SetOutput(os.Stdout)
-	appLogger.SetLevel(logrus.DebugLevel)
+	//set custom echo error handler
+	app.Echo.HTTPErrorHandler = customHTTPErrorHandler
+}
 
-	app.Echo.Logger = NewLogger(appLogger)
+//customHTTPErrorHandler handles and write output in format
+func customHTTPErrorHandler(err error, c echo.Context) {
+	code := http.StatusInternalServerError
+	if he, ok := err.(*echo.HTTPError); ok {
+		code = he.Code
+	}
+
+	output := response.GenericResponse{
+		ResponseCode: response.ResponseCodeError,
+		ResponseMessage: err.Error(),
+	}
+	if err := c.JSON(code, output); err != nil {
+		c.Logger().Error(err)
+	}
+	c.Logger().Error(err)
 }

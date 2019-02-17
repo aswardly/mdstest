@@ -10,4 +10,3 @@ type Application struct {
 	Echo 			*echo.Echo  			//echo app instance
 	AppConfig		*config.AppConfig		//application config
 }
-

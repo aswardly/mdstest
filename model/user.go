@@ -7,14 +7,16 @@ import (
 
 	"mdstest/helper"
 
+	"golang.org/x/crypto/bcrypt"
 	"github.com/jinzhu/gorm"
+	"github.com/pkg/errors"
 )
 
-const StatusActive = "A"
-const StatusInactive = "I"
-const StatusDeleted = "D"
+const UserStatusActive = "A"
+const UserStatusInactive = "I"
+const UserStatusDeleted = "D"
 
-var StatusMap =  map[string]string {
+var UserStatusMap =  map[string]string {
 	"A" : "Active",
 	"I" : "Inactive",
 	"D" : "Deleted",
@@ -74,13 +76,10 @@ func (u *User) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-
-//validators
-
 //validateStatus performs validation on field UserStatus
-func (u *User) validateStatus() *ValidationError {
-	if _, ok := StatusMap[u.UserStatus]; ok == false {
-		return &ValidationError{
+func (u *User) ValidateStatus() error {
+	if _, ok := UserStatusMap[u.UserStatus]; ok == false {
+		return ValidationError{
 			ErrorField: "UserStatus",
 			ErrorMsg: fmt.Sprintf("Invalid status value: %v", u.UserStatus),
 		}
@@ -89,33 +88,47 @@ func (u *User) validateStatus() *ValidationError {
 }
 
 //validateAdd performs validation on the model for new user case
-func (u *User) validateAdd(db gorm.DB) *ValidationError {
-	var exist int
+func (u *User) ValidateAdd(db *gorm.DB) error {
 	//check if user with same id exists
-	db.Where("user_id = ?", u.UserId).Count(&exist)
+	var count int
+	db.Table("users").Where("user_id = ?", u.UserId).Count(&count)
 
-	if exist >= 1 {
-		return &ValidationError{
+	if count >= 1 {
+		return ValidationError{
 			ErrorField: "UserId",
 			ErrorMsg: "User already exists",
 		}
 	}
 
-	return u.validateStatus()
+	return u.ValidateStatus()
 }
 
 //validateEdit performs validation on the model for edit user case
-func (u *User) validateEdit(db gorm.DB) *ValidationError {
-	var exist int
+func (u *User) ValidateEdit(db *gorm.DB) error {
 	//check if user with same id exists
-	db.Where("user_id = ?", u.UserId).Count(&exist)
+	var count int
+	db.Table("users").Where("user_id = ?", u.UserId).Count(&count)
 
-	if exist == 0 {
-		return &ValidationError{
+	if count == 0 {
+		return ValidationError{
 			ErrorField: "UserId",
 			ErrorMsg: "User doesn't exist",
 		}
 	}
 
-	return u.validateStatus()
+	return u.ValidateStatus()
+}
+
+//SetPassword sets bcrypt hash for field password (default cost = 10)
+func (u *User) SetPassword(plaintext string) error {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(plaintext), bcrypt.DefaultCost)
+	if err != nil {
+		return errors.Wrap(err, "Error generating password hash")
+	}
+	u.UserPassword = string(hashedPassword)
+	return nil
+}
+
+func (*User) TableName() string {
+	return "users"
 }
