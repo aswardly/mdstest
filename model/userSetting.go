@@ -12,7 +12,7 @@ import (
 type UserSetting struct {
 	SettingId		int			`json:"setting_id" gorm:"primary_key:AUTO_INCREMENT"`
 	UserId			string
-	User			*User		`gorm:"ForeignKey:UserId;AssociationForeignKey:UserId"`
+	User			*User		`gorm:"ForeignKey:UserId;AssociationForeignKey:UserId;-"`
 	SettingKey		string		`json:"setting_key"`
 	SettingValue	string		`json:"setting_value"`
 	LastUpdated		time.Time	`json:"last_updated"`
@@ -65,16 +65,9 @@ func (us *UserSetting) UnmarshalJSON(data []byte) error {
 
 //validateAdd performs validation on the model for new user setting case
 func (us *UserSetting) ValidateAdd(db *gorm.DB) error {
-	if us.User == nil {
-		return ValidationError{
-			ErrorField: "User",
-			ErrorMsg: "Null User value",
-		}
-	}
-
 	//check if setting with same key exists for the given user
 	var count int
-	db.Table("user_settings").Where("setting_id = ? AND user_id = ?", us.SettingId ,us.User.UserId).Count(&count)
+	db.Table("user_settings").Where("setting_key = ? AND user_id = ?", us.SettingKey ,us.UserId).Count(&count)
 
 	if db.Error != nil {
 		return errors.Wrap(db.Error, "Query error")
@@ -91,16 +84,9 @@ func (us *UserSetting) ValidateAdd(db *gorm.DB) error {
 
 //validateEdit performs validation on the model for new user setting case
 func (us *UserSetting) ValidateEdit(db *gorm.DB) error {
-	if us.User == nil {
-		return ValidationError{
-			ErrorField: "User",
-			ErrorMsg: "Null User value",
-		}
-	}
-
 	//check if setting with same key exists for the given user
 	var count int
-	db.Table("user_settings").Where("setting_id = ? AND user_id = ?", us.SettingId ,us.User.UserId).Count(&count)
+	db.Table("user_settings").Where("setting_key = ? AND user_id = ?", us.SettingKey ,us.UserId).Count(&count)
 
 	if db.Error != nil {
 		return errors.Wrap(db.Error, "Query error")

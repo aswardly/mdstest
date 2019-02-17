@@ -126,8 +126,8 @@ func UserUpdate(c echo.Context) error {
 
 //UserDelete is a handler for user delete route
 func UserDelete(c echo.Context) error {
-	//get DELETE request variables
-	userId := c.FormValue("user_id")
+	//get param
+	userId := c.Param("user_id")
 
 	//get db instance from context
 	db, ok := c.Get("GORM").(*gorm.DB)
@@ -156,6 +156,7 @@ func UserDelete(c echo.Context) error {
 
 	//Soft delete, update status only
 	userModel.UserStatus = model.UserStatusDeleted
+	userModel.LastUpdated = time.Now().In(helper.DefaultLocation)
 
 	//update user data
 	err = db.Save(userModel).Error
