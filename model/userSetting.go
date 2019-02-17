@@ -2,6 +2,7 @@ package model
 
 import (
 	"github.com/jinzhu/gorm"
+	"github.com/pkg/errors"
 	"mdstest/helper"
 
 	"encoding/json"
@@ -9,8 +10,9 @@ import (
 )
 
 type UserSetting struct {
-	SettingId		int			`json:"setting_id" gorm:"primary_key;AUTO_INCREMENT"`
-	User			*User		`gorm:"foreignKey:User"`
+	SettingId		int			`json:"setting_id" gorm:"primary_key:AUTO_INCREMENT"`
+	UserId			string
+	User			*User		`gorm:"ForeignKey:UserId;AssociationForeignKey:UserId"`
 	SettingKey		string		`json:"setting_key"`
 	SettingValue	string		`json:"setting_value"`
 	LastUpdated		time.Time	`json:"last_updated"`
@@ -74,6 +76,10 @@ func (us *UserSetting) ValidateAdd(db *gorm.DB) error {
 	var count int
 	db.Table("user_settings").Where("setting_id = ? AND user_id = ?", us.SettingId ,us.User.UserId).Count(&count)
 
+	if db.Error != nil {
+		return errors.Wrap(db.Error, "Query error")
+	}
+
 	if count >= 1 {
 		return ValidationError{
 			ErrorField: "UserId",
@@ -95,6 +101,10 @@ func (us *UserSetting) ValidateEdit(db *gorm.DB) error {
 	//check if setting with same key exists for the given user
 	var count int
 	db.Table("user_settings").Where("setting_id = ? AND user_id = ?", us.SettingId ,us.User.UserId).Count(&count)
+
+	if db.Error != nil {
+		return errors.Wrap(db.Error, "Query error")
+	}
 
 	if count == 0 {
 		return ValidationError{

@@ -7,4 +7,5 @@ const ResponseCodeError = "ERR"
 type GenericResponse struct {
 	ResponseCode 	string		`json:"response_code"`
 	ResponseMessage string		`json:"response_message"`
+	Data 			interface{}	`json:"data"`
 }

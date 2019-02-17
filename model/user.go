@@ -28,7 +28,7 @@ type User struct {
 	UserPassword	string			`json:"user_password"`
 	UserStatus		string			`json:"user_status"`
 	LastUpdated		time.Time		`json:"last_updated"`
-	UserSetting		[]UserSetting	`json:"user_setting"`
+	UserSettings	[]*UserSetting	`json:"user_setting" gorm:"ForeignKey:UserId;AssociationForeignKey:UserId"`
 }
 
 //MarshalJSON is a custom JSON marshaller for the user struct (satisfies interface json.Marshaler)
@@ -92,6 +92,9 @@ func (u *User) ValidateAdd(db *gorm.DB) error {
 	//check if user with same id exists
 	var count int
 	db.Table("users").Where("user_id = ?", u.UserId).Count(&count)
+	if db.Error != nil {
+		return errors.Wrap(db.Error, "Query error")
+	}
 
 	if count >= 1 {
 		return ValidationError{
@@ -108,6 +111,9 @@ func (u *User) ValidateEdit(db *gorm.DB) error {
 	//check if user with same id exists
 	var count int
 	db.Table("users").Where("user_id = ?", u.UserId).Count(&count)
+	if db.Error != nil {
+		return errors.Wrap(db.Error, "Query error")
+	}
 
 	if count == 0 {
 		return ValidationError{

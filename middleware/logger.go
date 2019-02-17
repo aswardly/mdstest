@@ -163,7 +163,7 @@ func LoggerWithConfig(config LoggerConfig) echo.MiddlewareFunc {
 				"bytes-in"	 : c.Request().Header.Get(echo.HeaderContentLength),
 				"bytes-out"	 : c.Response().Size,
 				"latency"	 : latency.String(),
-				"error"		 : err,
+				"error"		 : fmt.Sprintf("%+v",err),
 			})
 
 			if c.Response().Status >= 500 {

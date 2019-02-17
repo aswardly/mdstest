@@ -60,6 +60,7 @@ func RegistryWithConfig(config RegistryConfig) echo.MiddlewareFunc {
 				c.Logger().Fatalf("Failed creating Gorm instance: %+v\n", err)
 				return err
 			}
+			db.LogMode(true)
 			c.Set("GORM",db)
 
 			//TODO: setup other required objects here

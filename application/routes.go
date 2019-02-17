@@ -17,6 +17,8 @@ func (app *Application) SetupRoute() {
 	})
 
 	app.Echo.POST("/User/Create", handler.UserCreate)
-
+	app.Echo.GET("/User/:user_id", handler.UserQuery)
+	app.Echo.PUT("/User/Update", handler.UserUpdate)
+	app.Echo.DELETE("/User/Delete", handler.UserDelete)
 
 }
